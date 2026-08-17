@@ -4,6 +4,21 @@ terraform/USER_KEY.json
 __pycache__/
 *.py[codz]
 *$py.class
+# Terraform state and credentials
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# GCP Service Account Keys
+*.json
+terraform/USER_KEY.json
+
+# Python artifacts
+__pycache__/
+*.pyc
+.env
+venv/
 
 # C extensions
 *.so
