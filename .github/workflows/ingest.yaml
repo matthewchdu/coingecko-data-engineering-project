@@ -25,7 +25,7 @@ jobs:
       - name: Set up Google Cloud Key
         run: |
           mkdir -p terraform
-          echo "${{ secrets.USER_KEY}}" > terraform/USER_KEY.json
+          echo "${{ secrets.USER_KEY }}" > terraform/USER_KEY.json
 
       - name: Run Extraction Script
         run: python scripts/extract_data.py
