@@ -1,6 +1,5 @@
 # Automated Crypto ELT Data Pipeline and Analytics Project
 
-My first data engineering project!
 This is an end-to-end cloud data pipeline which extracts cryptocurrency data from the CoinGecko API.
 It stores raw data in a partitioned data lake on Google Cloud Storage Platform, transforming and de-duplicates records using BigQuery, then allows the user to see market trends in Google Data Studio. This is fully provisioned by Terraform and automated with GitHub actions.
 
@@ -19,17 +18,42 @@ flowchart LR
 ### 1. Extraction and Automation
 * Runs daily via GitHub Actions
 * Extracts top 100 coin data (price, market cap, 24hr vol) from CoinGecko
-* Completes in 26 seconds
+* Completes in under 30 seconds
+<div align="left">
+  <img src="assets/Schedule.png" alt="GitHub Actions" width="600"/>
+</div>
 
 ### 2. Data Lake Partitioning
 * Ingest script converts data into `.parquet` files and uploads to GCS
 * These files are organised into partitions (year, month, day) to minimise query costs
+<div align="left">
+  <img src="assets/Partitioning.png" alt="GCS Partitions" width="250"/>
+</div>
 
 ### 3. Data Transformation
 * De-duplicates records using SQL window functions in BigQuery
+```sql
+SELECT *
+FROM `project_name.crypto_bucket.raw_crypto_markets`
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY id, snapshot_date 
+  ORDER BY extracted_at DESC
+) = 1;
+```
+<div align="left">
+  <img src="assets/BigQuery.png" alt="BQ Screenshot" width="700"/>
+</div>
 
 ### 4. Infrastructure as Code
 * Terraform allows cloud resources to be reproduced seamlessly
+
+### 5. Dashboard
+* Google Data Studio dashboard
+* Has interactive date ranges, specific coin tracking, and graphs for analysis
+* Includes the cleaned database for further analysis
+<div align="left">
+  <img src="assets/Dashboard.png" alt="Data Studio Dashboard" width="500"/>
+</div>
 
 ## Setup
 ### Requirements
@@ -38,6 +62,10 @@ flowchart LR
 * Python 3.10+
 
 ### 1. Clone repository
+```sh
+git clone [https://github.com/](https://github.com/)<your-username>/coingecko-data-engineering-project.git
+cd coingecko-data-engineering-project
+```
 ### 2. GCP Setup
 1. Create a new GCP Project
 2. Create a service account with roles:
